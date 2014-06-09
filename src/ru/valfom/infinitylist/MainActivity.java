@@ -1,9 +1,11 @@
 package ru.valfom.infinitylist;
 
+import ru.valfom.infinitylist.parser.Grabber;
+import ru.valfom.infinitylist.parser.OnGrabbedListener;
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.ListFragment;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
@@ -11,7 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ArrayAdapter;
 
 public class MainActivity extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -45,9 +47,12 @@ public class MainActivity extends Activity
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getFragmentManager();
+//        fragmentManager.beginTransaction()
+//                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+//                .commit();
         fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
-                .commit();
+        .replace(R.id.container, ListViewFragment.newInstance(position + 1))
+        .commit();
     }
 
     public void onSectionAttached(int number) {
@@ -96,11 +101,11 @@ public class MainActivity extends Activity
         }
         return super.onOptionsItemSelected(item);
     }
-
+    
     /**
-     * A placeholder fragment containing a simple view.
+     * Fragment containing list view.
      */
-    public static class PlaceholderFragment extends Fragment {
+    public static class ListViewFragment extends ListFragment implements OnGrabbedListener {
         /**
          * The fragment argument representing the section number for this
          * fragment.
@@ -111,32 +116,43 @@ public class MainActivity extends Activity
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
+        public static ListViewFragment newInstance(int sectionNumber) {
+        	
+        	ListViewFragment fragment = new ListViewFragment();
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
             fragment.setArguments(args);
+            
             return fragment;
         }
 
-        public PlaceholderFragment() {
-        }
+        public ListViewFragment() {}
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
+        	
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(Integer.toString(getArguments().getInt(ARG_SECTION_NUMBER)));
+            
             return rootView;
         }
-
+        
         @Override
         public void onAttach(Activity activity) {
+        	
             super.onAttach(activity);
-            ((MainActivity) activity).onSectionAttached(
-                    getArguments().getInt(ARG_SECTION_NUMBER));
+            
+            ((MainActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
+            
+            new Grabber(this).execute();
         }
-    }
 
+		@Override
+		public void updateList(String[] result) {
+
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+		              android.R.layout.simple_list_item_1, result);
+			setListAdapter(adapter);
+		}
+    }
 }
