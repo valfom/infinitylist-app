@@ -53,7 +53,7 @@ public class Grabber extends AsyncTask<Void, Void, String[]> {
 			String attr = elementVideo.attr("data-encoded-embed-code");
 			String[] parts = attr.split("[//]");
 			String videoId = parts[4].split("[?]")[0];
-			String url = parts[2] + "/" + parts[3] + "/" + videoId;
+			String url = "http://" + parts[2] + "/" + parts[3] + "/" + videoId;
 			Log.d("LALA", url);
 			
 			videos[i] = url;

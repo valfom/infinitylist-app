@@ -6,6 +6,8 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.ListFragment;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
@@ -14,6 +16,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 
 public class MainActivity extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -126,7 +130,16 @@ public class MainActivity extends Activity
             return fragment;
         }
 
-        public ListViewFragment() {}
+        @Override
+		public void onListItemClick(ListView l, View v, int position, long id) {
+			
+			super.onListItemClick(l, v, position, id);
+			
+			TextView tv = (TextView) v.findViewById(android.R.id.text1);
+			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(tv.getText().toString())));
+		}
+
+		public ListViewFragment() {}
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
