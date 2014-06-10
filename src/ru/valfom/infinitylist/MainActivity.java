@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.ListFragment;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
@@ -133,11 +134,19 @@ public class MainActivity extends Activity
 			super.onListItemClick(l, v, position, id);
 			
 			TextView tv = (TextView) v.findViewById(android.R.id.text1);
-//			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(tv.getText().toString())));
 			
-			Intent intent = new Intent(getActivity(), Player.class);
-			intent.putExtra("url", tv.getText().toString());
-			startActivity(intent);
+			String url = tv.getText().toString();
+			
+			String[] urlParts = url.split("[//]+");
+			
+			if (urlParts[1].equals("www.youtube.com"))
+				startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+			else {
+				
+				Intent intent = new Intent(getActivity(), Player.class);
+				intent.putExtra("url", url);
+				startActivity(intent);
+			}
 		}
 
 		public ListViewFragment() {}
