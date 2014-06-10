@@ -1,4 +1,4 @@
-package ru.valfom.infinitylist.parser;
+package ru.valfom.infinitylist.grabber;
 
 public interface OnGrabbedListener {
 

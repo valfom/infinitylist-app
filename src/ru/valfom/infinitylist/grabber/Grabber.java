@@ -1,4 +1,4 @@
-package ru.valfom.infinitylist.parser;
+package ru.valfom.infinitylist.grabber;
 
 import java.io.IOException;
 
@@ -10,9 +10,9 @@ import org.jsoup.select.Elements;
 import android.os.AsyncTask;
 import android.util.Log;
 
-public class Grabber extends AsyncTask<Void, Void, String[]> {
+public class Grabber extends AsyncTask<Integer, Void, String[]> {
 	
-	private String url = "http://www.infinitylist.com/";
+	private String url = "http://www.infinitylist.com/page/%d/";
 	private int timeout = 60000;
 	
 	private OnGrabbedListener listener;
@@ -22,13 +22,13 @@ public class Grabber extends AsyncTask<Void, Void, String[]> {
 		this.listener = listener;
 	}                                                       
 	
-	private Document getSource() {
+	private Document getSource(int pageNumber) {
 		
 		Document doc = null;
 		
 		try {
 			
-			doc = Jsoup.connect(url).timeout(timeout).get();
+			doc = Jsoup.connect(String.format(url, pageNumber)).timeout(timeout).get();
 		
 		} catch (IOException e) {
 			
@@ -65,9 +65,13 @@ public class Grabber extends AsyncTask<Void, Void, String[]> {
 	}
 
 	@Override
-	protected String[] doInBackground(Void... params) {
+	protected String[] doInBackground(Integer... params) {
 		
-		Document doc = getSource();
+		int pageNumber = 1;
+		
+		if (params.length > 0) pageNumber = params[0]; 
+		
+		Document doc = getSource(pageNumber);
 		
         return parseSource(doc);
 	}

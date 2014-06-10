@@ -1,13 +1,13 @@
 package ru.valfom.infinitylist;
 
-import ru.valfom.infinitylist.parser.Grabber;
-import ru.valfom.infinitylist.parser.OnGrabbedListener;
+import ru.valfom.infinitylist.grabber.Grabber;
+import ru.valfom.infinitylist.grabber.OnGrabbedListener;
+import ru.valfom.infinitylist.player.Player;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.ListFragment;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
@@ -112,7 +112,7 @@ public class MainActivity extends Activity
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
-
+        
         /**
          * Returns a new instance of this fragment for the given section
          * number.
@@ -133,7 +133,11 @@ public class MainActivity extends Activity
 			super.onListItemClick(l, v, position, id);
 			
 			TextView tv = (TextView) v.findViewById(android.R.id.text1);
-			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(tv.getText().toString())));
+//			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(tv.getText().toString())));
+			
+			Intent intent = new Intent(getActivity(), Player.class);
+			intent.putExtra("url", tv.getText().toString());
+			startActivity(intent);
 		}
 
 		public ListViewFragment() {}
@@ -153,9 +157,17 @@ public class MainActivity extends Activity
             super.onAttach(activity);
             
             ((MainActivity) activity).onSectionAttached(getArguments().getInt(ARG_SECTION_NUMBER));
-            
-            new Grabber(this).execute();
         }
+
+		@Override
+		public void onViewCreated(View view, Bundle savedInstanceState) {
+
+			super.onViewCreated(view, savedInstanceState);
+			
+			getListView().setOnScrollListener(new EndlessScrollListener(this));
+			
+			new Grabber(this).execute();
+		}
 
 		@Override
 		public void updateList(String[] result) {
