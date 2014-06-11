@@ -144,9 +144,9 @@ public class MainActivity extends Activity
 			
 			super.onListItemClick(l, v, position, id);
 			
-			TextView tv = (TextView) v.findViewById(R.id.tvTitle);
+			TextView tvUrl = (TextView) v.findViewById(R.id.tvUrl);
 			
-			String url = tv.getText().toString();
+			String url = tvUrl.getText().toString();
 			
 			String[] urlParts = url.split("[//]+");
 			

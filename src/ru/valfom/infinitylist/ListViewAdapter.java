@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ListViewAdapter extends BaseAdapter {
@@ -53,6 +54,12 @@ public class ListViewAdapter extends BaseAdapter {
 
 		TextView tvTitle = ((TextView) view.findViewById(R.id.tvTitle));
 		tvTitle.setText(video.getTitle());
+		
+		ImageView ivThumbnail = (ImageView) view.findViewById(R.id.ivThumbnail);
+		ivThumbnail.setImageDrawable(video.getThumbnail());
+		
+		TextView tvUrl = ((TextView) view.findViewById(R.id.tvUrl));
+		tvUrl.setText(video.getUrl());
 
 		return view;
 	}

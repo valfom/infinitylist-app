@@ -1,5 +1,7 @@
 package ru.valfom.infinitylist.video;
 
+import android.graphics.drawable.Drawable;
+
 public class Video {
 	
 	public static final String TYPE_YOUTUBE = "youtube";
@@ -9,7 +11,18 @@ public class Video {
 	private String title;
 	private String previewUrl;
 	private String type;
+	private Drawable thumbnail;
 	
+	public Drawable getThumbnail() {
+		
+		return thumbnail;
+	}
+
+	public void setThumbnail(Drawable thumbnail) {
+		
+		this.thumbnail = thumbnail;
+	}
+
 	public Video() {}
 
 	public Video(String title) {
