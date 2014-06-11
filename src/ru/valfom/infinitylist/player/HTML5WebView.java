@@ -1,9 +1,9 @@
 package ru.valfom.infinitylist.player;
 
 import ru.valfom.infinitylist.R;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -19,19 +19,24 @@ import android.widget.FrameLayout;
 
 public class HTML5WebView extends WebView {
 
-    private Context                             mContext;
-    private MyWebChromeClient                   mWebChromeClient;
-    private View                                mCustomView;
-    private FrameLayout                         mCustomViewContainer;
-    private WebChromeClient.CustomViewCallback  mCustomViewCallback;
+    private Context mContext;
+    private MyWebChromeClient mWebChromeClient;
+    private View mCustomView;
+    private FrameLayout mCustomViewContainer;
+    private WebChromeClient.CustomViewCallback mCustomViewCallback;
 
-    private FrameLayout                         mContentView;
-    private FrameLayout                         mBrowserFrameLayout;
-    private FrameLayout                         mLayout;
+    private FrameLayout mContentView;
+    private FrameLayout mBrowserFrameLayout;
+    private FrameLayout mLayout;
+    
+    static final FrameLayout.LayoutParams COVER_SCREEN_PARAMS =
+    		new FrameLayout.LayoutParams( ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
     static final String LOGTAG = "HTML5WebView";
 
-    private void init(Context context) {
+    @SuppressLint("SetJavaScriptEnabled")
+	private void init(Context context) {
+    	
         mContext = context;     
         Activity a = (Activity) mContext;
 
@@ -45,19 +50,19 @@ public class HTML5WebView extends WebView {
 
         // Configure the webview
         WebSettings s = getSettings();
-        s.setBuiltInZoomControls(true);
-        s.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
-        s.setUseWideViewPort(true);
-        s.setLoadWithOverviewMode(true);
+//        s.setBuiltInZoomControls(true);
+//        s.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
+//        s.setUseWideViewPort(true);
+//        s.setLoadWithOverviewMode(true);
       //  s.setSavePassword(true);
-        s.setSaveFormData(true);
+//        s.setSaveFormData(true);
         s.setJavaScriptEnabled(true);
         mWebChromeClient = new MyWebChromeClient();
         setWebChromeClient(mWebChromeClient);
 
         setWebViewClient(new WebViewClient());
 
-setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+        setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
 
         // enable navigator.geolocation 
        // s.setGeolocationEnabled(true);
@@ -70,56 +75,71 @@ setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
     }
 
     public HTML5WebView(Context context) {
+    	
         super(context);
+        
         init(context);
     }
 
     public HTML5WebView(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context);
+        
+    	super(context, attrs);
+        
+    	init(context);
     }
 
     public HTML5WebView(Context context, AttributeSet attrs, int defStyle) {
+    	
         super(context, attrs, defStyle);
+        
         init(context);
     }
 
     public FrameLayout getLayout() {
+    	
         return mLayout;
     }
 
     public boolean inCustomView() {
-        return (mCustomView != null);
+        
+    	return (mCustomView != null);
     }
 
     public void hideCustomView() {
-        mWebChromeClient.onHideCustomView();
+        
+    	mWebChromeClient.onHideCustomView();
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+    	
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if ((mCustomView == null) && canGoBack()){
-                goBack();
-                return true;
+            
+        	if ((mCustomView == null) && canGoBack()){
+                
+        		goBack();
+                
+        		return true;
             }
         }
+        
         return super.onKeyDown(keyCode, event);
     }
 
     private class MyWebChromeClient extends WebChromeClient {
-        private Bitmap      mDefaultVideoPoster;
-        private View        mVideoProgressView;
+    	
+    	private View mVideoProgressView;
 
         @Override
-        public void onShowCustomView(View view, WebChromeClient.CustomViewCallback callback)
-        {
-            //Log.i(LOGTAG, "here in on ShowCustomView");
+        public void onShowCustomView(View view, WebChromeClient.CustomViewCallback callback) {
+        	
             HTML5WebView.this.setVisibility(View.GONE);
 
             // if a view already exists then immediately terminate the new one
             if (mCustomView != null) {
+            	
                 callback.onCustomViewHidden();
+                
                 return;
             }
 
@@ -131,7 +151,9 @@ setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
 
         @Override
         public void onHideCustomView() {
+        	
             System.out.println("customview hideeeeeeeeeeeeeeeeeeeeeeeeeee");
+            
             if (mCustomView == null)
                 return;        
 
@@ -149,35 +171,36 @@ setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
             //Log.i(LOGTAG, "set it to webVew");
         }
 
-
         @Override
         public View getVideoLoadingProgressView() {
+        	
             //Log.i(LOGTAG, "here in on getVideoLoadingPregressView");
 
             if (mVideoProgressView == null) {
+            	
                 LayoutInflater inflater = LayoutInflater.from(mContext);
                 mVideoProgressView = inflater.inflate(R.layout.video_loading_progress, null);
             }
+            
             return mVideoProgressView; 
         }
 
-         @Override
-         public void onReceivedTitle(WebView view, String title) {
-            ((Activity) mContext).setTitle(title);
-         }
+        @Override
+        public void onReceivedTitle(WebView view, String title) {
+        
+        	((Activity) mContext).setTitle(title);
+        }
 
-         @Override
-         public void onProgressChanged(WebView view, int newProgress) {
-             ((Activity) mContext).getWindow().setFeatureInt(Window.FEATURE_PROGRESS, newProgress*100);
-         }
+        @Override
+        public void onProgressChanged(WebView view, int newProgress) {
+             
+        	((Activity) mContext).getWindow().setFeatureInt(Window.FEATURE_PROGRESS, newProgress*100);
+        }
 
-         @Override
-         public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
-             callback.invoke(origin, true, false);
-         }
+        @Override
+        public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
+             
+        	callback.invoke(origin, true, false);
+        }
     }
-
-
-    static final FrameLayout.LayoutParams COVER_SCREEN_PARAMS =
-        new FrameLayout.LayoutParams( ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 }

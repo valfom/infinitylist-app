@@ -1,8 +1,11 @@
 package ru.valfom.infinitylist;
 
+import java.util.ArrayList;
+
 import ru.valfom.infinitylist.grabber.Grabber;
 import ru.valfom.infinitylist.grabber.OnGrabbedListener;
 import ru.valfom.infinitylist.player.Player;
+import ru.valfom.infinitylist.video.Video;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.FragmentManager;
@@ -16,13 +19,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 public class MainActivity extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
 
+	private ListViewFragment currentFragment;
+	
     /**
      * Fragment managing the behaviors, interactions and presentation of the navigation drawer.
      */
@@ -52,8 +56,9 @@ public class MainActivity extends Activity
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getFragmentManager();
+        currentFragment = ListViewFragment.newInstance(position + 1);
         fragmentManager.beginTransaction()
-        .replace(R.id.container, ListViewFragment.newInstance(position + 1))
+        .replace(R.id.container, currentFragment)
         .commit();
     }
 
@@ -99,6 +104,12 @@ public class MainActivity extends Activity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_settings) {
+        	
+            return true;
+        } else if (id == R.id.action_refresh) {
+        	
+        	new Grabber(currentFragment).execute();
+        	
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -133,7 +144,7 @@ public class MainActivity extends Activity
 			
 			super.onListItemClick(l, v, position, id);
 			
-			TextView tv = (TextView) v.findViewById(android.R.id.text1);
+			TextView tv = (TextView) v.findViewById(R.id.tvTitle);
 			
 			String url = tv.getText().toString();
 			
@@ -179,10 +190,10 @@ public class MainActivity extends Activity
 		}
 
 		@Override
-		public void updateList(String[] result) {
+		public void updateList(ArrayList<Video> videos) {
 
-			ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
-		              android.R.layout.simple_list_item_1, result);
+			ListViewAdapter adapter = new ListViewAdapter(getActivity(), videos);
+			
 			setListAdapter(adapter);
 		}
     }

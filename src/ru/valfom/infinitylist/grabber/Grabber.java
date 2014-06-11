@@ -1,16 +1,17 @@
 package ru.valfom.infinitylist.grabber;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import ru.valfom.infinitylist.video.Video;
 import android.os.AsyncTask;
-import android.util.Log;
 
-public class Grabber extends AsyncTask<Integer, Void, String[]> {
+public class Grabber extends AsyncTask<Integer, Void, ArrayList<Video>> {
 	
 	private String url = "http://www.infinitylist.com/page/%d/";
 	private int timeout = 60000;
@@ -38,34 +39,34 @@ public class Grabber extends AsyncTask<Integer, Void, String[]> {
 		return doc;
 	}
 
-	private String[] parseSource(Document doc) {
+	private ArrayList<Video> parseSource(Document doc) {
 		
 		Element elementPosts = doc.select("div.posts").first();
 		Elements elementsVideo = elementPosts.select("div.blog-post");
 		
-		int i = 0;
-		
-		String[] videos = new String[50]; //TODO: change size
+		ArrayList<Video> videos = new ArrayList<Video>();
 		
 		for (Element video : elementsVideo) {
 			
+			Video v = new Video();
+			
+			String title = video.attr("data-post-title");
+			v.setTitle(title);
 			Element elementVideo = video.select("div.video").first();
 			String attr = elementVideo.attr("data-encoded-embed-code");
 			String[] parts = attr.split("[//]");
 			String videoId = parts[4].split("[?]")[0];
 			String url = "http://" + parts[2] + "/" + parts[3] + "/" + videoId;
-			Log.d("LALA", url);
-			
-			videos[i] = url;
-			
-			i++;
+			v.setUrl(url);
+
+			videos.add(v);
 		}
 		
 		return videos;
 	}
 
 	@Override
-	protected String[] doInBackground(Integer... params) {
+	protected ArrayList<Video> doInBackground(Integer... params) {
 		
 		int pageNumber = 1;
 		
@@ -76,8 +77,8 @@ public class Grabber extends AsyncTask<Integer, Void, String[]> {
         return parseSource(doc);
 	}
 	
-	protected void onPostExecute(String[] result) {
+	protected void onPostExecute(ArrayList<Video> videos) {
    	 
-		listener.updateList(result);
+		listener.updateList(videos);
     }
 }

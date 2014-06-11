@@ -246,6 +246,7 @@ public class NavigationDrawerFragment extends Fragment {
         }
 
         if (item.getItemId() == R.id.action_refresh) {
+        	
             return true;
         }
 
