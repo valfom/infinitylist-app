@@ -1,9 +1,6 @@
 package ru.valfom.infinitylist.grabber;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 
 import org.jsoup.Jsoup;
@@ -12,10 +9,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import ru.valfom.infinitylist.video.Video;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 
 public class Grabber extends AsyncTask<Integer, Void, ArrayList<Video>> {
@@ -71,29 +64,11 @@ public class Grabber extends AsyncTask<Integer, Void, ArrayList<Video>> {
 			Element elementDetails = video.select("div.details").first();
 			String attrThumbnailUrl = elementDetails.attr("data-thumbnail-image-u-r-l");
 			v.setPreviewUrl(attrThumbnailUrl);
-			try {
-				v.setThumbnail(drawableFromUrl(url));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
+			
 			videos.add(v);
 		}
 		
 		return videos;
-	}
-	
-	public static Drawable drawableFromUrl(String url) throws IOException {
-		
-	    Bitmap x;
-
-	    HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-	    connection.connect();
-	    InputStream input = connection.getInputStream();
-
-	    x = BitmapFactory.decodeStream(input);
-	    return new BitmapDrawable(x);
 	}
 
 	@Override
